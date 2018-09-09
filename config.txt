@@ -1,0 +1,35 @@
+######################################## configuration file ########################################
+######## all input files should be tab or space separated ########
+ 
+# input graph file with p^i_{uv} for each item, node ids should be mapped to 0 to n-1
+probGraphFile : graph.txt
+
+# item-labels file 
+itemLeaningsFile : leanings_items.txt
+
+#node-labels file
+nodeLeaningsFile : leanings_nodes.txt
+
+# output folder for results
+outputFolder : output
+
+# number of nodes 
+n : 5454
+
+# number of edges
+m : 835725
+
+# number of items
+nrItems : 25
+
+# assignment size
+k : 50
+
+# user attention constraint ###
+attentionConstraint : 5
+
+# epsilon for RC-Estimation
+epsilon : 0.2
+
+# ell for delta of RIS-Estimation (1 / n^l)
+ell : 1
