@@ -1,35 +1,50 @@
 ######################################## configuration file ########################################
-######## all input files should be tab or space separated ########
- 
-# input graph file with p^i_{uv} for each item, node ids should be mapped to 0 to n-1
-probGraphFile : graph.txt
-
-# item-labels file 
-itemLeaningsFile : leanings_items.txt
-
-#node-labels file
-nodeLeaningsFile : leanings_nodes.txt
-
-# output folder for results
+# all input files should be tab or space separated
+#
+#
+# input directed graph file with one line per arc followed by item-specific influence parameters on that arc
+# node ids should be mapped to 0 to n-1 where n is the total number of nodes
+# format: node_u node_v p^1_{uv} ... p^{nrItems}_{uv} 
+# location of input graph file
+probGraphFile : example_input/graph.txt
+#
+#
+# location of item-labels file, one line per item label
+itemLeaningsFile : example_input/leanings_items.txt
+#
+#
+# location of node-labels file, one line per node label
+nodeLeaningsFile : example_input/leanings_nodes.txt
+#
+#
+# location of output folder for exporting results, creates the folder if it doesn't exist or overwrites if exists
 outputFolder : output
-
+#
+#
 # number of nodes 
-n : 5454
-
+n : 167
+#
+#
 # number of edges
-m : 835725
-
+m : 634
+#
+#
 # number of items
 nrItems : 25
-
+#
+#
 # assignment size
-k : 50
-
-# user attention constraint ###
-attentionConstraint : 5
-
+k : 5
+#
+#
+# user attention constraint 
+attentionConstraint : 1
+#
+#
 # epsilon for RC-Estimation
 epsilon : 0.2
-
-# ell for delta of RIS-Estimation (1 / n^l)
-ell : 1
+#
+#
+# ell for delta of RC-Estimation (1 / n^l)
+ell : 1 
+#
