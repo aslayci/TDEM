@@ -17,8 +17,8 @@
 
 # Configuration of input files and parameters 
 
-**config.txt:** sample configuration file that needs to be edited and passed as a command line arguement to TDEM. 
-It contains the necessary information on input parameters and files as required by TDEM.   
+**config.txt:** sample configuration file that needs to be edited and passed as a command line argument to TDEM. 
+It contains all the necessary information on arguments that TDEM requires as input.  
 
 
 # Running from command line
