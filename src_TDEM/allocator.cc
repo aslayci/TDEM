@@ -14,7 +14,7 @@ namespace _Cide{
         
         n = strToInt(opt->getValue("n"));
         m = strToInt(opt->getValue("m"));
-        k = strToInt(opt->getValue("k"));
+        k = strToInt(opt->getValue("k")); 
         nrItems = strToInt(opt->getValue("nrItems"));
         kappa = strToInt(opt->getValue("attentionConstraint"));
         epsilon = strToDouble(opt->getValue("epsilon"));
@@ -29,7 +29,7 @@ namespace _Cide{
         delta = pow(double (1 / (double) n), ell);
         
         prevSize = 0;
-        hyper_degree = std::vector<double>(nrPairs,0);
+        hyper_degree = std::vector<double>(nrPairs,0); //? what is this hyper_degree?
         for(int i = 0; i < nrPairs; i++)
             hyperG.push_back(std::vector<int>());
         
