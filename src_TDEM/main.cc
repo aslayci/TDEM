@@ -69,5 +69,4 @@ AnyOption* readOptions(int argc, char* argv[]) {
     opt->processCommandArgs( argc, argv );
     cout << endl << endl;
     return opt;
-    
 }

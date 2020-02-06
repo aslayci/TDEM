@@ -129,7 +129,8 @@ AnyOption::init(int maxopt, int maxcharopt )
 	hasoptions = false;
 	autousage = false;
 
-	strcpy( long_opt_prefix , "--" );
+	//strcpy( long_opt_prefix , "--" ); Here I change for the Wstringop-overflow
+	strncpy(long_opt_prefix, "--", MAX_LONG_PREFIX_LENGTH);
 
 	if( alloc() == false ){
 		cout << endl << "OPTIONS ERROR : Failed allocating memory" ;
