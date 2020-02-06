@@ -1,3 +1,0 @@
-/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/CMakeFiles/TDEM.dir
-/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/CMakeFiles/edit_cache.dir
