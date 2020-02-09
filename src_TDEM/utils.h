@@ -54,8 +54,10 @@ inline unsigned int strToInt(string s) {
   return i;
 }
 
-inline unsigned int strToInt(const char* s) {
-  unsigned int i;
+//inline unsigned int strToInt(const char* s) {
+inline int strToInt(const char* s) {
+  //unsigned int i;
+  int i;
   istringstream myStream(s);
 
   if (myStream >> i)
@@ -124,6 +126,22 @@ inline double logcnk(int n, int k) {
         ans -= std::log(i);
     }
     return ans;
+}
+
+// add some calculations
+inline double fact(int n){
+    if(n == 1)
+        return 1;
+    else
+        return n*fact(n-1);
+}
+
+inline double Permutation(int n, int k){
+    return (double) fact(n)/ (double) fact(k);
+}
+
+inline double Combination(int n, int k){
+    return Permutation(n, k) / fact(k);
 }
 
 inline double sqr(double t)

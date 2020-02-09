@@ -44,7 +44,9 @@ namespace _Cide{
     
         // problem parameters
         AnyOption *opt;
-        int n, m, nrItems, nrPairs, kappa, k;
+        int n, m, nrItems, nrPairs, k_r, k_b, k;
+        int tao = k_b / k_r;
+        double P;
         double epsilon, delta, ell;
     
         std::vector<double> nodeLeanings;
@@ -52,6 +54,7 @@ namespace _Cide{
         std::vector<int> seedSet;
         std::vector<double> seedScores;
         std::vector<double> nodeDegree;
+
         
         // RC-sampling related
         sfmt_t sfmtSeed;
@@ -59,8 +62,14 @@ namespace _Cide{
         std::vector< std::vector<int> > hyperG;
         std::vector<double> hyper_degree;
         vector<int> targetNodes;
-        int64 prevSize;
-        
+        int64 prevSize; // used in generate rrsets
+
+        // to ensure pick pairs, define something similar to hyperGT
+
+        std::vector< std::vector<int> > hyperGTpairs;
+        std::vector<std::vector<int>> hyperGpairs;
+        std::vector<double > hyper_degreepairs;
+
         double tdem();
         double lowerBoundOPT();
         void generateRCSets(int64 newSize);
@@ -68,6 +77,10 @@ namespace _Cide{
         double degreeClose(int64 rcSampleSize, int k);
         double degreeFar(int64 rcSampleSize, int k);
         double degreeWeighted(int64 rcSampleSize, int k);
+
+        // to ensure pick pairs
+        double createhyperGTPairs(int64 newSize);
+
         
         
         // time and memory

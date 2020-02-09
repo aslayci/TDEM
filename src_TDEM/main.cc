@@ -34,15 +34,16 @@ AnyOption* readOptions(int argc, char* argv[]) {
     
     opt->setOption("probGraphFile");
     opt->setOption("itemLeaningsFile");
-    opt->setOption("nodeLeaningsFile");
     opt->setOption("outputFolder");
     
     opt->setOption("n");
     opt->setOption("m");
     opt->setOption("nrItems");
     opt->setOption("k");
-    opt->setOption("attentionConstraint");
-    
+    opt->setOption("kr");
+    opt->setOption("kb");
+//    opt->setOption("attentionConstraint");
+
     opt->setOption("epsilon");
     opt->setOption("ell");
 

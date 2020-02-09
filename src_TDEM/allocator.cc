@@ -2,6 +2,7 @@
 #include "anyoption.h"
 #include "iheap.h"
 #include <ctime>
+#include <numeric>
 
 namespace _Cide{
     
@@ -14,37 +15,51 @@ namespace _Cide{
         
         n = strToInt(opt->getValue("n"));
         m = strToInt(opt->getValue("m"));
-        k = strToInt(opt->getValue("k")); 
+        k = strToInt(opt->getValue("k"));
+        k_r = strToInt(opt->getValue("kr"));
+        k_b = strToInt(opt->getValue("kb"));
+        tao = (int) k_b/k_r;
+        P = Permutation(n, n-k_r*(tao + 1)) / (double) (pow(fact(tao), k_r) * fact(k_r));
+
+        // TO ensure that P is correct
+        cout << "tao is " << tao << endl;
+        cout << "P is " << P << endl;
+        cout << "Compare is " << pow(2.71, logcnk(nrPairs, k)) << endl;
+
         nrItems = strToInt(opt->getValue("nrItems"));
-        kappa = strToInt(opt->getValue("attentionConstraint"));
         epsilon = strToDouble(opt->getValue("epsilon"));
         ell = strToDouble(opt->getValue("ell"));
         outFolderName = opt->getValue("outputFolder");
     
-        nrPairs = n * nrItems;
+        nrPairs = n * nrItems; // multiple items
         
         for(int i = 0; i < n; i++)
-            graphT.push_back(vector<int>());
-        
-        delta = pow(double (1 / (double) n), ell);
-        
-        prevSize = 0;
-        hyper_degree = std::vector<double>(nrPairs,0); //? what is this hyper_degree?
+            graphT.emplace_back(vector<int>());
+
+        prevSize = 0; // when sample the first node
         for(int i = 0; i < nrPairs; i++)
-            hyperG.push_back(std::vector<int>());
-        
+            hyperG.emplace_back(std::vector<int>());
+
+        // create new pairs-related functions
+        hyper_degreepairs = std::vector<double>(n*n, 0);
+        for (int i = 0; i < n*n; ++i) {
+           hyperGpairs.emplace_back(std::vector<int>());
+        }
+
         rcList = new itemGraphList();
         //item-specific probT is aligned with graphT for each item
         for(int i = 0; i < nrItems; i++) {
-            _Cide::itemGraph *ig = new _Cide::itemGraph(n);
-            for (int i = 0; i < n; i++)
-                ig->probT.push_back(std::vector< double>());
+            //_Cide::itemGraph *ig = new _Cide::itemGraph(n);
+            auto *ig = new _Cide::itemGraph(n);
+            for (int j = 0; j < n; j++)
+                //ig->probT.push_back(std::vector< double>());
+                ig->probT.emplace_back(std::vector< double>());
             rcList->push_back(ig);
         }
+
         nodeDegree = std::vector<double>(n,0.0);
         
         cout << "nr items " << nrItems << endl;
-        cout << "attention bound " << kappa << endl;
         cout << "assignment size " << k << endl;
         
         readNodeLeaningsFile();
@@ -71,7 +86,7 @@ namespace _Cide{
         double lb = lowerBoundOPT();
         cout << "lower bound identified: " << lb << endl;
         
-        theta = (16 + 8/3 * epsilon) * n * (log(n) + log(2) +  logcnk(nrPairs,k)) / (epsilon * epsilon * lb);
+        theta = (8 + 4/3.0 * epsilon) * n * (ell*log(n) + log(1 + log2(n)) +  log(P)) / (epsilon * epsilon * lb);
         
         cout << "final sample size " << theta << endl;
         generateRCSets(theta);
@@ -79,7 +94,7 @@ namespace _Cide{
         clock_t common_end = clock();
         duration_common = double(common_end - common_begin) / CLOCKS_PER_SEC;
         
-        double greedySolution = n * rcGreedy(theta, k, true);
+        double greedySolution = n * rcGreedy(max(prevSize, theta), k, true);
         return greedySolution; 
     }
 
@@ -88,16 +103,17 @@ namespace _Cide{
         
         double epsilon_1 = epsilon;
         
-        for (int x = 1; x < log2(n); x++) {
+        for (int i = 1; i < log2(n); i++) {
 //            cout << "here x = " << x << endl;
-            
-            int64 theta_x = (4+4/3 * epsilon_1)* (log(n) + logcnk(nrPairs,k) + log(log2(n) + 1)) * pow(2.0,x) / (2.0 * epsilon_1 * epsilon_1);
-//            cout << "here theta_x " << theta_x << endl;
+            float x = n / (double) pow(2.0, i);
+            int64 theta_x = (2+2/3.0 * epsilon_1)* (ell*log(n) + log(P) + log(log2(n) + 1)) *n / (x * epsilon_1 * epsilon_1);
+            cout << "here theta_x " << theta_x << endl;
             generateRCSets(theta_x);
-            double ept = rcGreedy(theta_x, k, false);
-//            cout << "ept " << ept << endl;
 
-            if (ept > ((1+epsilon_1) * 2.0 / pow(2.0, x))) {
+            double ept = rcGreedy(theta_x, k, false);
+            cout << "ept " << ept << endl;
+
+            if (ept*n > ((1+epsilon_1) * x)) {
                 double lowerBound = ept * n / (1 + epsilon_1);
                 return lowerBound;
             }
@@ -109,7 +125,10 @@ namespace _Cide{
     }
 
     void allocator::generateRCSets(int64 newSize) {
-        
+
+        if(newSize < prevSize){
+            return;
+        }
         // sample target nodes
         for (int i = prevSize; i < newSize; i++) {
             int randTarget = sfmt_genrand_uint32(&sfmtSeed) % n;
@@ -120,163 +139,142 @@ namespace _Cide{
         for(int itemID = 0; itemID < nrItems; itemID++) {
             rcList->at(itemID)->generateRRSample(targetNodes, prevSize, newSize);
         }
-        
-        for(int itemID = 0; itemID < nrItems; itemID++) {
-            for (int rcID = prevSize; rcID < newSize; rcID++) {
-                int target = targetNodes[rcID];
-                for (int j = 0; j < rcList->at(itemID)->hyperGT[rcID].size(); j++) {
-                    int t = rcList->at(itemID)->hyperGT[rcID][j];
-                    int t_p = t + n * itemID;
-                    hyperG[t_p].push_back(rcID);
-                    hyper_degree[t_p] += std::abs(nodeLeanings[target] - itemLeanings[itemID]);
-                }
+
+        // rcList -> itemID -> hyperGT[rcID]: store a list of the nodes.
+        double tmpsize = createhyperGTPairs(newSize);
+        cout << "size of hyPerGTPairs is " << tmpsize << endl;
+
+        for (int rcID = prevSize; rcID < newSize; ++rcID) {
+            int tpsize = hyperGTpairs[rcID].size();
+            for (int i = 0; i < tpsize; ++i) {
+                int x = hyperGTpairs[rcID][i]; // because x is too large.
+                hyperGpairs[x].push_back(rcID);
+                hyper_degreepairs[x] += 1;
+            }
+            int tprsize = rcList->at(0)->hyperGT[rcID].size();
+            for (int j = 0; j < tprsize; ++j) {
+                int y = rcList->at(0)->hyperGT[rcID][j];
+                hyperG[y].push_back(rcID); // careful about the repeatation
+            }
+            int tpbsize = rcList->at(1)->hyperGT[rcID].size();
+            for (int j = 0; j < tpbsize; ++j) {
+                int y = rcList->at(1)->hyperGT[rcID][j];
+                hyperG[y+n].push_back(rcID); // careful about the repeatation
             }
         }
+
         prevSize = newSize;
 
     }
 
-    double allocator::rcGreedy(int64 rcSampleSize, int k, bool extraResults) {
-        
-        clock_t begin = clock();
-        priority_queue<pair<int, double>, vector<pair<int, double>>, CompareBySecond>heap;
-        std::vector<double> divExpScore(nrPairs, 0);
-        std::vector<int> attentionQuota = std::vector<int>(n,kappa);
-        
-        std::vector<double> rcMinSeen(rcSampleSize,-5.0);
-        std::vector<double> rcMaxSeen(rcSampleSize, 5.0);
-
-        vector<bool> isCovered(rcSampleSize, false);
-        vector<bool> pairMark(nrPairs, true);
-        
-        
-        double totalExpScore = 0;
-        int bestPairID, bestNodeID, bestItemID;
-        
-        for (int i = 0; i < nrPairs; i++) {
-            std::pair<int, double>pairVal(std::make_pair(i, hyper_degree[i]));
-            heap.push(pairVal);
-            divExpScore[i] = hyper_degree[i];
+    double allocator::createhyperGTPairs(int64 newSize) {
+        // use to create reverse rr pairs
+        //update hyperG and hyper_degree
+        cout << "newSize is " << newSize << endl;
+        for (int z = prevSize; z < newSize; ++z) {
+            hyperGTpairs.emplace_back(std::vector<int>()); // init
         }
 
-        int nrCoveredRC = 0;
+        for (int rcID = prevSize; rcID < newSize; ++rcID) {
+            for (int i = 0; i < rcList->at(0)->hyperGT[rcID].size(); ++i) {
+                for (int j = 0; j < rcList->at(1)->hyperGT[rcID].size(); ++j) {
+                   int t = rcList->at(0)->hyperGT[rcID][i]*n + rcList->at(1)->hyperGT[rcID][j];
+                   hyperGTpairs[rcID].push_back(t);
+                }
+            }
+        }
+
+        return hyperGTpairs.size();
+    }
+
+
+    double allocator::rcGreedy(int64 rcSampleSize, int k, bool extraResults) {
+
+        // For initialization the k_r and k_b, to delete later.
+
+        clock_t begin = clock();
+        std::vector<double> ExpScore(n*n, 0); // use to store hyper_degreepairs
+
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
+                if (i != j){
+                    ExpScore[i*n + j] = hyper_degreepairs[i*n + j];
+                }
+            }
+        }
+
+        for (int k1 = 0; k1 < n; ++k1) {
+            ExpScore[k1*n + k1]  = 0;
+        }
+
+        double totalExpScore = 0;
+        int bestPairID, bestRedNodeID, bestBlueNodeID, bestItemID;
+        std::vector<int> isValidRed = std::vector<int>(n,tao);
+        std::vector<int> isValidBlue = std::vector<int>(n,1);
+        std::vector<bool> isCovered = std::vector<bool>(rcSampleSize, false);
+
+
         seedSet.clear();
-        while ((int)seedSet.size() < k) {
-            
-            pair<int, double> pairVal = heap.top();
-            heap.pop();
-            bestPairID = pairVal.first;
-            bestNodeID = (int) bestPairID % n;
-            // if the attention quota for this node is filled, remove it from queue and contimue
-            if(attentionQuota[bestNodeID] == 0)
-                continue;
-            // if its marginal gain in the previous pair selection iteration, update its mg in the queue
-            if (pairVal.second != divExpScore[pairVal.first]) {
-                pairVal.second = divExpScore[pairVal.first];
-                heap.push(pairVal);
+        seedScores.clear(); // seedScores should be cleared as well.
+        while ((int)seedSet.size() < k_b) {
+            // here I use the vector to store the results, but can use the priority queue.
+            bestPairID = std::max_element(ExpScore.begin(), ExpScore.end()) - ExpScore.begin();
+            //cout << "ExpScore is " << ExpScore[bestPairID] << "rc sample size is " <<rcSampleSize << " n is " << n << endl;
+            bestRedNodeID = (int) bestPairID / n;
+            bestBlueNodeID = (int) bestPairID % n;
+
+            // if can not select, then just pop out
+            if (isValidRed[bestRedNodeID] == 0 || isValidBlue[bestBlueNodeID] == 0) {
+                ExpScore[bestPairID] = 0;
                 continue;
             }
+
+            // push
+            seedSet.push_back(bestPairID); // store
+            //cout << "ExpScore is " << ExpScore[bestPairID] << "rc sample size is " <<rcSampleSize << "n is " << n << endl;
+            seedScores.push_back(ExpScore[bestPairID] / (double) rcSampleSize); // store score
+
+            // make update
+            isValidRed[bestRedNodeID] -= 1;
+            isValidRed[bestBlueNodeID] = 0;
+            isValidBlue[bestBlueNodeID] = 0;
+            isValidBlue[bestRedNodeID] = 0;
+
+            if(isValidRed[bestRedNodeID] <= 0){
+                for (int i = 0; i < n; ++i) {
+                   ExpScore[bestRedNodeID*n + i] = 0;
+                }
+            }
+            for (int i = 0; i < n; ++i) {
+               ExpScore[i*n + bestBlueNodeID]  = 0;
+               ExpScore[i*n + bestRedNodeID]  = 0;
+               ExpScore[bestBlueNodeID*n + i] = 0;
+            }
             
-            bestItemID = (int) bestPairID / n;
-            totalExpScore += divExpScore[bestPairID];
-            seedSet.push_back(bestPairID);
-            seedScores.push_back(n * divExpScore[bestPairID] / (double) rcSampleSize);
-            pairMark[bestPairID] = false;
-            attentionQuota[bestNodeID]--;
 
-            // update the hyper_degree of the pairs whose marginal gain change due to the best pair selection
-            vector<int> rcsAffected = hyperG[bestPairID]; // ids of RC sets that contain this best pair
-            for (int j = 0; j < rcsAffected.size(); j++) {
-                int rcID = rcsAffected[j];
-                int target = targetNodes[rcID];
-                double prevGain, currGain;
-                
-                // if it is the first time this RC is covered by a seed pair -- below the marginal gain update operations for this case
-                if (!isCovered[rcID]) {
-                    isCovered[rcID] = true;
-                    nrCoveredRC++;
-                    rcMinSeen[rcID] = std::min(nodeLeanings[target], itemLeanings[bestItemID]);
-                    rcMaxSeen[rcID] = std::max(nodeLeanings[target], itemLeanings[bestItemID]);
-
-                    // compute the amount of change in marginal gain for each item contain in this RC set
-                    for(int itemID = 0; itemID < nrItems; itemID++) {
-                
-                        prevGain = std::abs(nodeLeanings[target] - itemLeanings[itemID]); // mg to empty set
-                        if (itemLeanings[itemID] >= rcMinSeen[rcID] &&  itemLeanings[itemID] <= rcMaxSeen[rcID]) {
-                            currGain = 0;
-                        }
-                        else if(itemLeanings[itemID] < rcMinSeen[rcID]) {
-                            currGain = rcMinSeen[rcID] - itemLeanings[itemID];
-                        }
-                        else if(itemLeanings[itemID] > rcMaxSeen[rcID]) {
-                            currGain = itemLeanings[itemID] - rcMaxSeen[rcID];
-                        }
-                        vector<int> rrTemp = rcList->at(itemID)->hyperGT[rcID];
-                        for (int z = 0; z < rrTemp.size(); z++) {
-                            int pairID = rrTemp[z] + n * itemID;
-                            if(pairMark[pairID]) {
-                                double tempD = divExpScore[pairID];
-                                divExpScore[pairID] = tempD - prevGain + currGain;
-                                if(divExpScore[pairID] < 0) {
-                                    divExpScore[pairID] = 0;
-                                }
-
-                            }
+            // update the ExpScore of the pairs whose marginal gain change due to the best pair selection
+            int tmpsize = hyperGpairs[bestPairID].size();
+            for (int j = 0; j < tmpsize; j++) {
+                int rcID = hyperGpairs[bestPairID][j]; // get the rcID
+                if(isCovered[rcID] == false){ // ensure not to repeatedly --
+                    int ttmpsize = hyperGTpairs[rcID].size();
+                    for (int z = 0; z < ttmpsize; z++) {
+                        int pairID = hyperGTpairs[rcID][z];
+                        if (ExpScore[pairID] != 0) {
+                            ExpScore[pairID]--;
                         }
                     }
+                    isCovered[rcID] = true;
                 }
-
-                // if it was already covered before
-                else {
-                    if(itemLeanings[bestItemID] >= rcMinSeen[rcID] && itemLeanings[bestItemID] <= rcMaxSeen[rcID])
-                        continue;
-                    
-                    double prevMin = rcMinSeen[rcID];
-                    double prevMax = rcMaxSeen[rcID];
-                    rcMinSeen[rcID] = std::min(prevMin, itemLeanings[bestItemID]);
-                    rcMaxSeen[rcID] = std::max(prevMax, itemLeanings[bestItemID]);
-
-                    for(int itemID = 0; itemID < nrItems; itemID++) {
-                        if (itemLeanings[itemID] >= prevMin &&  itemLeanings[itemID] <= prevMax) {
-                            prevGain = 0;
-                        }
-                        else if(itemLeanings[itemID] < prevMin) {
-                            prevGain = prevMin - itemLeanings[itemID];
-                        }
-                        else if(itemLeanings[itemID] > prevMax) {
-                            prevGain = itemLeanings[itemID] - prevMax;
-                        }
-                        
-                        if (itemLeanings[itemID] >= rcMinSeen[rcID] &&  itemLeanings[itemID] <= rcMaxSeen[rcID]) {
-                            currGain = 0;
-                        }
-                        else if(itemLeanings[itemID] < rcMinSeen[rcID]) {
-                            currGain = rcMinSeen[rcID] - itemLeanings[itemID];
-                        }
-                        else if(itemLeanings[itemID] > rcMaxSeen[rcID]) {
-                            currGain = itemLeanings[itemID] - rcMaxSeen[rcID];
-                        }
-                        
-                        vector<int> rrTemp = rcList->at(itemID)->hyperGT[rcID];
-                            for (int z = 0; z < rrTemp.size(); z++) {
-                                int pairID = rrTemp[z] + n * itemID;
-                                if(pairMark[pairID]) {
-                                    double tempD = divExpScore[pairID];
-                                    divExpScore[pairID] = tempD - prevGain + currGain;
-                                    if(divExpScore[pairID] < 0) {
-                                        divExpScore[pairID] = 0;
-                                    }
-
-                                }
-                            }
-                        }
-                } // end-if this RC was already covered before
-
-            }// end of for loop for affected
+           }
         } // end of while k loop
-        
-        
+
+        for (int i1 = 0; i1 < seedScores.size(); ++i1) {
+           totalExpScore += seedScores[i1];
+        }
+
         ///////////// produce the additional results here
+        ////////////  Remember should write the f function results not the g function result.
         if(extraResults) {
             
             clock_t end = clock();
@@ -287,10 +285,10 @@ namespace _Cide{
             
             double totMGs = 0;
             for (int i = 0; i < seedSet.size(); i++) {
-                int node = (int) seedSet[i] % n;
-                int item = (int) seedSet[i] / n;
+                int nodeRed = (int) seedSet[i] / n;
+                int nodeBlue = (int) seedSet[i] % n;
                 totMGs += seedScores[i];
-                writeInMasterOutputFile(node,item,seedScores[i],totMGs,totalDuration,totalMemory);
+                writeInMasterOutputFile(nodeRed,nodeBlue,seedScores[i],totMGs,totalDuration,totalMemory);
             }
             cout << "total tdem div. exp. score " << totMGs << endl;
             
@@ -309,20 +307,20 @@ namespace _Cide{
                 exit(1);
             }
 
-            extraStream1 << "nodeID" << " " << "itemID" << " " <<  "targetNodeID" << " " << "reachProb" << endl;
+            extraStream1 << "RednodeID" << " " << "BluenodeID" << " " <<  "targetNodeID" << " " << "reachProb" << endl;
             
             extraStream1 << std::fixed;
             extraStream1.precision(8);
             
-            vector< vector<double> > pairNodeReachProbs;
-            
-            for (int i = 0; i < k; i++) {
+            std::vector< vector<double> > pairNodeReachProbs;
+
+            for (int i = 0; i < k_b; i++) {
                 pairNodeReachProbs.push_back(std::vector<double>(n,0.0));
             }
             
-            for (int i = 0; i < k; i++) {
+            for (int i = 0; i < k_b; i++) {
                 int seedPairID = seedSet[i];
-                vector<int> rcsCovered = hyperG[seedPairID]; // ids of RC sets that contain this best pair
+                vector<int> rcsCovered = hyperGpairs[seedPairID]; // ids of RC sets that contain this best pair
                 for (int j = 0; j < rcsCovered.size(); j++) {
                     int rcID = rcsCovered[j];
                     int target = targetNodes[rcID];
@@ -331,20 +329,20 @@ namespace _Cide{
                 }
             }
             
-            for (int i = 0; i < k; i++) {
+            for (int i = 0; i < k_b; i++) {
                 int seedPairID = seedSet[i];
-                int nodeID = (int) seedPairID % n;
-                int itemID = (int) seedPairID / n;
+                int RednodeID = (int) seedPairID / n;
+                int BluenodeID = (int) seedPairID % n;
                 for (int j = 0; j < n; j++) {
                     double tempVal = pairNodeReachProbs[i][j];
                     pairNodeReachProbs[i][j] = (double) n * tempVal / (double) rcSampleSize;
-                    extraStream1 << nodeID << " " << itemID << " " <<  j << " " << pairNodeReachProbs[i][j] << endl;
+                    extraStream1 << RednodeID << " " << BluenodeID << " " <<  j << " " << pairNodeReachProbs[i][j] << endl;
                 }
             }
             
             extraStream1.close();
             
-            // compute fv(seedset) for each target node v
+            // compute f(seedset) for each target node v, should consider the other pairs.
             string extraFName2 = outFolderName + OS_SEP + "nodeExpLevels_tdem.txt";
             ofstream extraStream2;
             
@@ -352,36 +350,60 @@ namespace _Cide{
                 extraStream2.close();
             
             extraStream2.open(extraFName2.c_str());
-            
+
             if (extraStream2.is_open() == false) {
                 cout << "Can't open file " << extraFName2  << " for writing" << endl;
                 exit(1);
             }
             
-            extraStream2 << "targetNodeID" << " " << "exposure_level" << endl;
+            extraStream2 << "targetNodeID" << " " << "final_score_f" << " " << "in total"<< endl;
+
+            vector<double> nodeSampleExpLevels(rcSampleSize,0.0);
             vector<double> nodeExpLevels(n,0.0);
-            
-            for (int rcID = 0; rcID < rcSampleSize; rcID++) {
-                int target = targetNodes[rcID];
-                if(isCovered[rcID]) {
-                    nodeExpLevels[target] += (rcMaxSeen[rcID] - rcMinSeen[rcID]);
+            std::vector<int> rrRed;
+            std::vector<int> rrBlue;
+
+            for (int i = 0; i < k_b; ++i) {
+                int SeedPairID = seedSet[i];
+                for (int j = 0; j < hyperG[SeedPairID / n].size(); ++j) {
+                    int id = hyperG[SeedPairID / n][j];
+                    rrRed.push_back(id);
+                }
+                for (int l = 0; l < hyperG[SeedPairID % n + n].size(); ++l) {
+                    int id = hyperG[SeedPairID % n + n][l];
+                    rrBlue.push_back(id);
                 }
             }
+
+            std::sort(rrRed.begin(), rrRed.end());
+            std::sort(rrBlue.begin(), rrBlue.end());
+
+            std::vector<int> rrRedBlue(rrRed.size() + rrBlue.size(), 0);
+            set_intersection(rrRed.begin(), rrRed.end(), rrBlue.begin(), rrBlue.end(), rrRedBlue.begin());
+
+            for (int zz = 0; zz < rrRedBlue.size(); ++zz) {
+                int tmp = targetNodes[rrRedBlue[zz]];
+                nodeExpLevels[tmp] += 1;
+            }
+
+            float totalscore = 0;
             
 //            double kontrolAw = 0;
             for (int i = 0 ; i < n ; i++) {
                 double tempVal = nodeExpLevels[i];
-                nodeExpLevels[i] = (double) n * tempVal / (double) rcSampleSize;
+                nodeExpLevels[i] = (double) tempVal / (double) rcSampleSize;
+                totalscore += nodeExpLevels[i];
 //                kontrolAw += nodeExpLevels[i];
-                extraStream2 << i << " " << nodeExpLevels[i] << endl;
+                extraStream2 << i << " " << nodeExpLevels[i] << " " << totalscore << endl;
             }
 
             extraStream2.close();
-//            cout << "kontrol " << kontrolAw << endl;
+//
+            cout << "Total score is " << totalscore << endl;
             
         } // end of extra results
         
-        return totalExpScore / (double) rcSampleSize;
+        return totalExpScore;
     }
     
     double allocator::degreeClose(int64 rcSampleSize, int k) {
@@ -390,8 +412,7 @@ namespace _Cide{
         
         priority_queue<pair<int, double>, vector<pair<int, double>>, CompareBySecond>heap;
         std::vector<double> divExpScore(nrPairs, 0);
-        std::vector<int> attentionQuota = std::vector<int>(n,kappa);
-        
+
         std::vector<double> rcMinSeen(rcSampleSize,-5.0);
         std::vector<double> rcMaxSeen(rcSampleSize, 5.0);
         
@@ -415,12 +436,7 @@ namespace _Cide{
             
             pair<int, double> pairVal = heap.top();
             bestNodeID = pairVal.first;
-            attentionQuota[bestNodeID]--;
-            
-            if(attentionQuota[bestNodeID] == 0) { //if the attention quota for this node is topped already, pop it from the queue forevah
-                heap.pop();
-            }
-            
+
             double itMax = 2.0;
             for (int itemID = 0; itemID < nrItems; itemID++) {
                 int pairIDtemp = bestNodeID + n * itemID;
@@ -647,8 +663,7 @@ namespace _Cide{
         
         priority_queue<pair<int, double>, vector<pair<int, double>>, CompareBySecond>heap;
         std::vector<double> divExpScore(nrPairs, 0);
-        std::vector<int> attentionQuota = std::vector<int>(n,kappa);
-        
+
         std::vector<double> rcMinSeen(rcSampleSize,-5.0);
         std::vector<double> rcMaxSeen(rcSampleSize, 5.0);
         
@@ -674,12 +689,7 @@ namespace _Cide{
             
             pair<int, double> pairVal = heap.top();
             bestNodeID = pairVal.first;
-            attentionQuota[bestNodeID]--;
-            
-            if(attentionQuota[bestNodeID] == 0) { //if the attention quota for this node is topped already, pop it from the queue forevah
-                heap.pop();
-            }
-            
+
             double itMax = 0;
             for (int itemID = 0; itemID < nrItems; itemID++) {
                 int pairIDtemp = bestNodeID + n * itemID;
@@ -874,7 +884,7 @@ namespace _Cide{
         
         extraStream2.open(extraFName2.c_str());
         
-        if (extraStream2.is_open() == false) {
+        if (!extraStream2.is_open()) {
             cout << "Can't open file " << extraFName2  << " for writing" << endl;
             exit(1);
         }
@@ -912,8 +922,7 @@ namespace _Cide{
         clock_t begin = clock();
         priority_queue<pair<int, double>, vector<pair<int, double>>, CompareBySecond>heap;
         std::vector<double> divExpScore(nrPairs, 0);
-        std::vector<int> attentionQuota = std::vector<int>(n,kappa);
-        
+
         std::vector<double> rcMinSeen(rcSampleSize,-5.0);
         std::vector<double> rcMaxSeen(rcSampleSize, 5.0);
         
@@ -944,18 +953,14 @@ namespace _Cide{
             heap.pop();
             bestPairID = pairVal.first;
             bestNodeID = (int) bestPairID % n;
-            // if the attention quota for this node is filled, remove it from queue and contimue
-            if(attentionQuota[bestNodeID] == 0)
-                continue;
-            
+
             
             bestItemID = (int) bestPairID / n;
             totalExpScore += divExpScore[bestPairID];
             seedSet.push_back(bestPairID);
             seedScores.push_back(n * divExpScore[bestPairID] / (double) rcSampleSize);
             pairMark[bestPairID] = false;
-            attentionQuota[bestNodeID]--;
-            
+
             // update the hyper_degree of the pairs whose marginal gain change due to the best pair selection
             vector<int> rcsAffected = hyperG[bestPairID]; // ids of RC sets that contain this best pair
             for (int j = 0; j < rcsAffected.size(); j++) {
@@ -1058,7 +1063,7 @@ namespace _Cide{
         
         extraStream0.open(extraFName0.c_str());
         
-        if (extraStream0.is_open() == false) {
+        if (!extraStream0.is_open()) {
             cout << "Can't open file " << extraFName0  << " for writing" << endl;
             exit(1);
         }
@@ -1135,38 +1140,39 @@ namespace _Cide{
             extraStream2.close();
         
         extraStream2.open(extraFName2.c_str());
-        
-        if (extraStream2.is_open() == false) {
-            cout << "Can't open file " << extraFName2  << " for writing" << endl;
+
+        if (extraStream2.is_open()) {
+
+            extraStream2 << "targetNodeID" << " " << "exposure_level" << endl;
+            vector<double> nodeExpLevels(n, 0.0);
+
+            for (int rcID = 0; rcID < rcSampleSize; rcID++) {
+                int target = targetNodes[rcID];
+                if (isCovered[rcID]) {
+                    nodeExpLevels[target] += (rcMaxSeen[rcID] - rcMinSeen[rcID]);
+                }
+            }
+
+            //            double kontrolAw = 0;
+            for (int i = 0; i < n; i++) {
+                double tempVal = nodeExpLevels[i];
+                nodeExpLevels[i] = (double) n * tempVal / (double) rcSampleSize;
+                //                kontrolAw += nodeExpLevels[i];
+                extraStream2 << i << " " << nodeExpLevels[i] << endl;
+            }
+
+            extraStream2.close();
+            //            cout << "kontrol " << kontrolAw << endl;
+
+            //        } // end of extra results
+
+
+
+            return totalExpScore / (double) rcSampleSize;
+        } else {
+            cout << "Can't open file " << extraFName2 << " for writing" << endl;
             exit(1);
         }
-        
-        extraStream2 << "targetNodeID" << " " << "exposure_level" << endl;
-        vector<double> nodeExpLevels(n,0.0);
-        
-        for (int rcID = 0; rcID < rcSampleSize; rcID++) {
-            int target = targetNodes[rcID];
-            if(isCovered[rcID]) {
-                nodeExpLevels[target] += (rcMaxSeen[rcID] - rcMinSeen[rcID]);
-            }
-        }
-        
-        //            double kontrolAw = 0;
-        for (int i = 0 ; i < n ; i++) {
-            double tempVal = nodeExpLevels[i];
-            nodeExpLevels[i] = (double) n * tempVal / (double) rcSampleSize;
-            //                kontrolAw += nodeExpLevels[i];
-            extraStream2 << i << " " << nodeExpLevels[i] << endl;
-        }
-        
-        extraStream2.close();
-        //            cout << "kontrol " << kontrolAw << endl;
-        
-        //        } // end of extra results
-        
-        
-        
-        return totalExpScore / (double) rcSampleSize;
     }
 
     void allocator::readTICGraph() {
@@ -1253,55 +1259,16 @@ namespace _Cide{
     }
     
     void allocator::readItemLeaningsFile() {
-        cout << "reading item leanings file " << endl;
-        string itemLeaningsFile = opt->getValue("itemLeaningsFile");
-        ifstream myfile(itemLeaningsFile.c_str(), ios::in);
-        
-        int itemIndex = 0;
-        
-        if(myfile.is_open()) {
-            while(!myfile.eof()) {
-                std::string line;
-                getline(myfile, line);
-                if(line.empty())
-                    continue;
-                itemLeanings.push_back(strToDouble(line));
-                if(++itemIndex == nrItems)
-                    break;
-            }
-            myfile.close();
-        }
-        else {
-            cout << "problem opening the item leanings file, exiting... " <<  endl;
-            exit(1);
-        }
+        // temporary, to delete later
+        itemLeanings.push_back(strToDouble("0"));
+        itemLeanings.push_back(strToDouble("1"));
     }
     
     void allocator::readNodeLeaningsFile() {
-        cout << "reading node leanings file " << endl;
-        string nodeLeaningsFile = opt->getValue("nodeLeaningsFile");
-        ifstream myfile(nodeLeaningsFile.c_str(), ios::in);
-        
+        // temporary, to delete later
         int nodeIndex = 0;
-        
-        if(myfile.is_open()) {
-            while(!myfile.eof()) {
-                std::string line;
-                getline(myfile,line);
-//                cout << "line " << line << endl;
-                if(line.empty())
-                    continue;
-//                nodeLeaningsFile[nodeIndex] = strToDouble(line);
-                nodeLeanings.push_back(strToDouble(line));
-                if(++nodeIndex == n)
-                    break;
-            }
-            myfile.close();
-//            cout << "size " << nodeLeanings.size() << endl;
-        }
-        else {
-            cout << "problem opening the node leanings file, exiting... " << nodeLeaningsFile << endl;
-            exit(1);
+        if(++nodeIndex != n){
+            nodeLeanings.push_back(strToDouble("0.0"));
         }
     }
     
@@ -1343,9 +1310,9 @@ namespace _Cide{
     //    }
     
     
-    void allocator::writeInMasterOutputFile(int nodeID, int itemID, double mgScore, double totScore, float duration, float memory) {
+    void allocator::writeInMasterOutputFile(int nodeRed, int nodeBlue, double mgScore, double totScore, float duration, float memory) {
         // seed-node item mgScore totScore runTime(sec) memory(mb)
-        outMasterStream << nodeID << " " << itemID << " " <<  mgScore << " " << totScore << " " << duration << " " << memory << endl;
+        outMasterStream << nodeRed << " " << nodeBlue << " " <<  mgScore << " " << totScore << " " << duration << " " << memory << endl;
     }
 
     
