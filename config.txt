@@ -35,7 +35,7 @@ nrItems : 2
 #
 #
 # assignment size
-k : 5
+#k : 5
 # assignment size, kr and kb, ensure that kb > kr
 kr : 5
 kb : 5

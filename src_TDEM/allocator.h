@@ -44,13 +44,13 @@ namespace _Cide{
     
         // problem parameters
         AnyOption *opt;
-        int n, m, nrItems, nrPairs, k_r, k_b, k;
-        int tao = k_b / k_r;
+        int n, m, nrItems, nrPairs, k_r, k_b;
+        int tao = floor((double) k_b / (double) k_r);
         double P;
         double epsilon, delta, ell;
     
-        std::vector<double> nodeLeanings;
-        std::vector<double> itemLeanings;
+        //std::vector<double> nodeLeanings;
+        //std::vector<double> itemLeanings;
         std::vector<int> seedSet;
         std::vector<double> seedScores;
         std::vector<double> nodeDegree;
@@ -60,7 +60,7 @@ namespace _Cide{
         sfmt_t sfmtSeed;
         itemGraphList *rcList; // contains references to coordinated RR sets of item graphs
         std::vector< std::vector<int> > hyperG;
-        std::vector<double> hyper_degree;
+        std::vector<double> hyper_degree; //previously not shown
         vector<int> targetNodes;
         int64 prevSize; // used in generate rrsets
 
@@ -73,10 +73,10 @@ namespace _Cide{
         double tdem();
         double lowerBoundOPT();
         void generateRCSets(int64 newSize);
-        double rcGreedy(int64 rcSampleSize, int k, bool extraResults);
-        double degreeClose(int64 rcSampleSize, int k);
-        double degreeFar(int64 rcSampleSize, int k);
-        double degreeWeighted(int64 rcSampleSize, int k);
+        double rcGreedy(int64 rcSampleSize, bool extraResults);
+        double degreeClose(int64 rcSampleSize);
+       // double degreeFar(int64 rcSampleSize, int k);
+        //double degreeWeighted(int64 rcSampleSize, int k);
 
         // to ensure pick pairs
         double createhyperGTPairs(int64 newSize);
@@ -90,8 +90,8 @@ namespace _Cide{
         // IO operations
         string delim;
         void readTICGraph();
-        void readItemLeaningsFile();
-        void readNodeLeaningsFile();
+        //void readItemLeaningsFile();
+        //void readNodeLeaningsFile();
         
         void writeInMasterOutputFile(int nodeID, int itemID, double mgScore, double totScore, float duration, float memory);
 //        void writeInMasterOutputFile(int nodeID, int itemID);
