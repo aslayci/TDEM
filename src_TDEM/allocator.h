@@ -74,15 +74,14 @@ namespace _Cide{
         double lowerBoundOPT();
         void generateRCSets(int64 newSize);
         double rcGreedy(int64 rcSampleSize, bool extraResults);
-        double degreeClose(int64 rcSampleSize);
+        double degreeVersionOne(int64 rcSampleSize);
+        double degreeVersionTwo(int64 rcSampleSize);
        // double degreeFar(int64 rcSampleSize, int k);
         //double degreeWeighted(int64 rcSampleSize, int k);
 
         // to ensure pick pairs
         double createhyperGTPairs(int64 newSize);
 
-        
-        
         // time and memory
         float totalDuration; // in seconds
         float totalMemory; // in MB

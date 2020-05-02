@@ -8,35 +8,35 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug"/>
+				<Option working_dir="/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug"/>
+				<Option working_dir="/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="TDEM">
-				<Option output="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/TDEM" prefix_auto="0" extension_auto="0"/>
+				<Option output="/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/TDEM" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="~/project/objective-allocation-of-political-ads/codes/TDEM"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM"/>
-					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt"/>
-					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/example_input"/>
+					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM"/>
+					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt"/>
+					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/TDEM/example_input"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -47,22 +47,22 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 TDEM"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 TDEM"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="TDEM/fast">
-				<Option output="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/TDEM" prefix_auto="0" extension_auto="0"/>
+				<Option output="/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/TDEM" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="~/project/objective-allocation-of-political-ads/codes/TDEM"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM"/>
-					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt"/>
-					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/example_input"/>
+					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM"/>
+					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt"/>
+					<Add directory="/home/sijing/project/objective-allocation-of-political-ads/TDEM/example_input"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -73,108 +73,108 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 TDEM/fast"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 TDEM/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug"/>
+				<Option working_dir="/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/sijing/project/objective-allocation-of-political-ads/TDEM/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/example_input/graph.txt">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/example_input/graph.txt">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/allocator.cc">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/allocator.cc">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/allocator.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/allocator.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/anyoption.cc">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.cc">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/anyoption.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/head.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/head.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/iheap.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/iheap.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/itemGraph.cc">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/itemGraph.cc">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/itemGraph.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/itemGraph.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/main.cc">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/main.cc">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-alti.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-alti.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-common.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-common.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params11213.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params11213.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params1279.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params1279.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params132049.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params132049.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params19937.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params19937.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params216091.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params216091.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params2281.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params2281.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params4253.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params4253.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params44497.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params44497.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params607.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params607.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-params86243.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params86243.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT-sse2.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-sse2.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT.c">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT.c">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt/SFMT.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/utils.cc">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.cc">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/utils.h">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.h">
 			<Option target="TDEM"/>
 		</Unit>
-		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/CMakeLists.txt">
+		<Unit filename="/home/sijing/project/objective-allocation-of-political-ads/TDEM/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

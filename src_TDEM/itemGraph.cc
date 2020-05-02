@@ -49,7 +49,7 @@ namespace _Cide{
                 int v = graphT[i][j]; //parent of u in the original graph G
                 n_visit_edge++;
                 double randDouble = sfmt_genrand_real1(&sfmtSeed);
-                if(randDouble > probT[i][j])
+                if(randDouble > ((double)1.0/ (double)graphT[i].size())) // calculated on the fly
                     continue;
                 if(visit[v])
                     continue;

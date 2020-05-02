@@ -7,11 +7,11 @@ C_FLAGS = -g
 
 C_DEFINES = 
 
-C_INCLUDES = -I/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM -I/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt -I/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/example_input 
+C_INCLUDES = -I/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM -I/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt -I/home/sijing/project/objective-allocation-of-political-ads/TDEM/example_input 
 
 CXX_FLAGS = -g   -std=gnu++14
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM -I/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/src_TDEM/sfmt -I/home/sijing/project/objective-allocation-of-political-ads/codes/TDEM/example_input 
+CXX_INCLUDES = -I/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM -I/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt -I/home/sijing/project/objective-allocation-of-political-ads/TDEM/example_input 
 
