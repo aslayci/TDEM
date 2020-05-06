@@ -48,12 +48,6 @@ anyoption.h
 utils.h
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.h
 
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.cc
-cstring
--
-anyoption.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.h
-
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.h
 iostream
 -
@@ -65,10 +59,6 @@ string
 -
 
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/iheap.h
-
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/itemGraph.cc
-itemGraph.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/itemGraph.h
 
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/itemGraph.h
 cstdlib
@@ -89,16 +79,6 @@ utils.h
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.h
 sfmt/SFMT.h
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT.h
-
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/main.cc
-cstdlib
--
-iostream
--
-anyoption.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.h
-allocator.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/allocator.h
 
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params.h
 SFMT-params607.h
@@ -157,10 +137,6 @@ altivec.h
 -
 emmintrin.h
 -
-
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.cc
-utils.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.h
 
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/utils.h
 iostream

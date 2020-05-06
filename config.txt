@@ -37,8 +37,8 @@ nrItems : 2
 # assignment size
 #k : 5
 # assignment size, kr and kb, ensure that kb > kr
-kr : 5
-kb : 5
+kr : 7
+kb : 7
 #
 #
 # user attention constraint 

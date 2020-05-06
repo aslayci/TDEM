@@ -9,8 +9,9 @@ namespace _Cide{
     allocator::allocator(AnyOption* opt1) {
         
         opt = opt1;
-        delim = " \t";
-        
+        //delim = " \t";
+        delim = " ";
+
         sfmt_init_gen_rand(&sfmtSeed , 95082);
         
         n = strToInt(opt->getValue("n"));
@@ -20,12 +21,8 @@ namespace _Cide{
         k_r = strToInt(opt->getValue("kr"));
         k_b = strToInt(opt->getValue("kb"));
         tao = ceil(k_b/k_r);
-        P = Permutation(n, n-k_r*(tao + 1)) / (double) (pow(fact(tao), k_r) * fact(k_r));
+        P = Permutation(n, k_r*(tao + 1)) / (double) (pow(fact(tao), k_r) * fact(k_r));
 
-        // TO ensure that P is correct
-        //cout << "tao is " << tao << endl;
-        //cout << "P is " << P << endl;
-        //cout << "Compare is " << pow(2.71, logcnk(nrPairs, k)) << endl;
 
         nrItems = strToInt(opt->getValue("nrItems"));
         epsilon = strToDouble(opt->getValue("epsilon"));
@@ -82,7 +79,7 @@ namespace _Cide{
         double lb = lowerBoundOPT();
         cout << "lower bound identified: " << lb << endl;
         
-        theta = (8 + 4/3.0 * epsilon) * n * (ell*log(n) + log(1 + log2(n)) +  log(P)) / (epsilon * epsilon * lb);
+        theta = (2 + 2/3.0 * epsilon) * n * (log(n) + log(2) +  log(P)) / (epsilon * epsilon * lb);
         
         cout << "final sample size " << theta << endl;
         generateRCSets(theta);
@@ -95,28 +92,25 @@ namespace _Cide{
     }
 
     double allocator::lowerBoundOPT() {
-        
+
         double epsilon_1 = epsilon;
-        
-        for (int i = 1; i < log2(n); i++) {
-//            cout << "here x = " << x << endl;
-            float x = n / (double) pow(2.0, i);
-            int64 theta_x = (2+2/3.0 * epsilon_1)* (ell*log(n) + log(P) + log(log2(n) + 1)) *n / (x * epsilon_1 * epsilon_1);
-            cout << "here theta_x " << theta_x << endl;
+
+        for (int x = 1; x < log2(n); x++) {
+
+            int64 theta_x = (2+2.0/3.0 * epsilon_1)* (ell * log(n) + log(P) + log(log2(n))) * pow(2.0,x) / (epsilon_1 * epsilon_1);
             generateRCSets(theta_x);
-
             double ept = rcGreedy(theta_x, false);
-            cout << "ept " << ept << endl;
 
-            if (ept*n > ((1+epsilon_1) * x)) {
+            cout << "ept is: " << ept << endl;
+
+            if (ept > ((1+epsilon_1) * 2.0 / pow(2.0, x))) {
                 double lowerBound = ept * n / (1 + epsilon_1);
                 return lowerBound;
             }
         }
         cout << "returning naive lower bound  " << endl;
-        double naive = (double) k_r;
+        double naive = 1.0;
         return naive;
-        
     }
 
     void allocator::generateRCSets(int64 newSize) {
@@ -183,7 +177,6 @@ namespace _Cide{
 
 
     double allocator::rcGreedy(int64 rcSampleSize, bool extraResults) {
-
         // For initialization the k_r and k_b, to delete later.
 
         clock_t begin = clock();
@@ -348,7 +341,7 @@ namespace _Cide{
 
         } // end of extra results
         
-        return totalExpScore;
+        return totalExpScore / (double)rcSampleSize;
     }
 
 
@@ -577,7 +570,7 @@ namespace _Cide{
                 std::string line;
                 getline (myfile,line);
                 if (line.empty()) continue;
-                
+                cout << line << endl;
                 std::string::size_type pos = line.find_first_of(delim);
                 int prevpos = 0;
                 
