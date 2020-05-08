@@ -14,6 +14,10 @@ namespace _Cide{
         delim = " ";
 
         compareFile = comparefilename;
+        compareFileShort = compareFile;
+        for (int j = 0; j < 4; ++j) {
+           compareFileShort.pop_back();
+        }
 
         readGraphNodes(); // assign n and m
         readCompareNodes(); // get red and blue nodes as k_r and k_b
@@ -314,7 +318,7 @@ namespace _Cide{
             // compute for each seed pair its prob. of reaching target nodes
             
             // compute f(seedset) for each target node v, should consider the other pairs.
-            string extraFName0 = outFolderName + OS_SEP + compareFile + "_tdem.txt";
+            string extraFName0 = outFolderName + OS_SEP + compareFileShort + OS_SEP + "Greedy.txt";
             ofstream extraStream0;
 
             if(extraStream0.is_open())
@@ -393,7 +397,7 @@ namespace _Cide{
 
     double allocator::degreeVersionOne(int64 rcSampleSize) {
 
-        string extraFName0 = outFolderName + OS_SEP + compareFile + "_degreeVersionOne.txt";
+        string extraFName0 = outFolderName + OS_SEP + compareFileShort + OS_SEP + "degreeVersionOne.txt";
         ofstream extraStream0;
         if(extraStream0.is_open())
             extraStream0.close();
@@ -488,7 +492,7 @@ namespace _Cide{
 
     double allocator::degreeVersionTwo(int64 rcSampleSize) {
 
-        string extraFName0 = outFolderName + OS_SEP + compareFile + "_degreeVersionTwo.txt";
+        string extraFName0 = outFolderName + OS_SEP + compareFileShort + OS_SEP + "degreeVersionTwo.txt";
 
         ofstream extraStream0;
         if(extraStream0.is_open())
@@ -605,7 +609,7 @@ namespace _Cide{
 
     double allocator::compareGivenNodes(int64 rcSampleSize) {
 
-        string extraFName0 = outFolderName + OS_SEP + compareFile + "_compareGiven.txt";
+        string extraFName0 = outFolderName + OS_SEP + compareFileShort + OS_SEP + "compareGiven.txt";
 
         ofstream extraStream0;
         if(extraStream0.is_open())
@@ -830,7 +834,9 @@ namespace _Cide{
        string command = string("mkdir -p ") + outFolderName ;
         
        system(command.c_str());
-        
+
+        string commands = string("mkdir -p ") + outFolderName + OS_SEP + compareFileShort ; // results in detail
+        system(commands.c_str());
         
         string masterFileName = compareFile + "_combinedresults.txt";
         outMasterName = outFolderName + OS_SEP + masterFileName;

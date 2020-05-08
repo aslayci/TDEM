@@ -1,5 +1,11 @@
 #!/bin/bash
-#SBATCH --time=0-00:10:00    # 10 hours
-#SBATCH --mem=5000    # 50000MB of memory
+#SBATCH --time=0-10:00:00    # 10 hours
+#SBATCH --mem=100000    # 50000MB of memory
 
 ./main_TDEM -c config.txt -x example_input/graph2.txt -y out_graph2_20.txt
+./main_TDEM -c config.txt -x example_input/epinions_plain.txt -y out_epinions_wc_10.txt
+./main_TDEM -c config.txt -x example_input/flixster_plain.txt -y out_flixster_wc_10.txt
+./main_TDEM -c config.txt -x example_input/epinions_plain.txt -y out_epinions_wc_20.txt
+./main_TDEM -c config.txt -x example_input/flixster_plain.txt -y out_flixster_wc_20.txt
+./main_TDEM -c config.txt -x example_input/epinions_plain.txt -y out_epinions_wc_50.txt
+./main_TDEM -c config.txt -x example_input/flixster_plain.txt -y out_flixster_wc_50.txt

@@ -80,16 +80,6 @@ utils.h
 sfmt/SFMT.h
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT.h
 
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/main.cc
-cstdlib
--
-iostream
--
-anyoption.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/anyoption.h
-allocator.h
-/home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/allocator.h
-
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params.h
 SFMT-params607.h
 /home/sijing/project/objective-allocation-of-political-ads/TDEM/src_TDEM/sfmt/SFMT-params607.h

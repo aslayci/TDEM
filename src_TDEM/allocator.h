@@ -46,6 +46,7 @@ namespace _Cide{
         AnyOption *opt;
         string probGraphFile; // define input graph
         string compareFile;
+        string compareFileShort;
         int n, m, nrItems, nrPairs, k_r, k_b;
         int tao = floor((double) k_b / (double) k_r);
         double P;
