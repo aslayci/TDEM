@@ -6,7 +6,7 @@
 # node ids should be mapped to 0 to n-1 where n is the total number of nodes
 # format: node_u node_v p^1_{uv} ... p^{nrItems}_{uv} 
 # location of input graph file
-probGraphFile : example_input/graph2.txt
+#probGraphFile : example_input/graph2.txt
 #
 #
 # location of item-labels file, one line per item label

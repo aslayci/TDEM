@@ -1,0 +1,117 @@
+inputfile name is example_input/graph2.txt
+comparfile name is out_graph2_20.txt
+Config file : config.txt
+
+
+total number of nodes 167
+total number of edges 634
+total number of red nodes 7
+total number of blue nodes 13
+nr items 2
+Reading file example_input/graph2.txt
+graph import complete 
+successfully read everything 
+starting assignment for tdem
+computation for lower bounding OPT started 
+current size is 68217 size of hyPerGTPairs is 68217
+sum of Expscore is 1236786
+sum of Expscore is 951782
+sum of Expscore is 796196
+sum of Expscore is 695207
+sum of Expscore is 607013
+sum of Expscore is 571656
+sum of Expscore is 539859
+sum of Expscore is 487578
+sum of Expscore is 8177
+sum of Expscore is 6608
+sum of Expscore is 4666
+sum of Expscore is 3128
+sum of Expscore is 724
+totalExpScore is: 10116 cover is 10116 sample size is 68217
+ept is: 0.148291
+current size is 136435 size of hyPerGTPairs is 136435
+sum of Expscore is 2460536
+sum of Expscore is 1894979
+sum of Expscore is 1594270
+sum of Expscore is 1388489
+sum of Expscore is 1234184
+sum of Expscore is 1159082
+sum of Expscore is 1054390
+sum of Expscore is 1029108
+sum of Expscore is 49816
+sum of Expscore is 25873
+sum of Expscore is 14460
+sum of Expscore is 11375
+sum of Expscore is 7622
+totalExpScore is: 21601 cover is 21601 sample size is 136435
+ept is: 0.158324
+current size is 272871 size of hyPerGTPairs is 272871
+sum of Expscore is 4932668
+sum of Expscore is 3700969
+sum of Expscore is 3213921
+sum of Expscore is 2905729
+sum of Expscore is 2586506
+sum of Expscore is 2435535
+sum of Expscore is 2224895
+sum of Expscore is 103281
+sum of Expscore is 50153
+sum of Expscore is 33244
+sum of Expscore is 26718
+sum of Expscore is 18628
+sum of Expscore is 7906
+totalExpScore is: 39437 cover is 39437 sample size is 272871
+ept is: 0.144526
+current size is 545743 size of hyPerGTPairs is 545743
+sum of Expscore is 9920122
+sum of Expscore is 7435333
+sum of Expscore is 6447189
+sum of Expscore is 5833744
+sum of Expscore is 5202738
+sum of Expscore is 4909954
+sum of Expscore is 4482196
+sum of Expscore is 242865
+sum of Expscore is 142225
+sum of Expscore is 91676
+sum of Expscore is 57773
+sum of Expscore is 40559
+sum of Expscore is 19567
+totalExpScore is: 79695 cover is 79695 sample size is 545743
+ept is: 0.14603
+current size is 1091487 size of hyPerGTPairs is 1.09149e+06
+sum of Expscore is 19810496
+sum of Expscore is 14861947
+sum of Expscore is 12898249
+sum of Expscore is 11673336
+sum of Expscore is 10412606
+sum of Expscore is 9822664
+sum of Expscore is 8973692
+sum of Expscore is 413670
+sum of Expscore is 202542
+sum of Expscore is 134580
+sum of Expscore is 107420
+sum of Expscore is 74777
+sum of Expscore is 31201
+totalExpScore is: 157480 cover is 157480 sample size is 1091487
+ept is: 0.14428
+lower bound identified: 20.079
+final sample size 283110
+sum of Expscore is 19810496
+sum of Expscore is 14861947
+sum of Expscore is 12898249
+sum of Expscore is 11673336
+sum of Expscore is 10412606
+sum of Expscore is 9822664
+sum of Expscore is 8973692
+sum of Expscore is 413670
+sum of Expscore is 202542
+sum of Expscore is 134580
+sum of Expscore is 107420
+sum of Expscore is 74777
+sum of Expscore is 31201
+totalExpScore is: 157480 cover is 157480 sample size is 1091487
+Total score of Greedy is 39.0167
+Greedy Solution is: 24.0948
+Total score of Degree one is 35.0476
+Total score of degree two is 33.1141
+Total score of compare is 41.7425
+assignments complete! 

@@ -1,0 +1,5 @@
+#!/bin/bash
+#SBATCH --time=0-00:10:00    # 10 hours
+#SBATCH --mem=5000    # 50000MB of memory
+
+./main_TDEM -c config.txt -x example_input/graph2.txt -y out_graph2_20.txt

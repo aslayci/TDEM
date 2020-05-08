@@ -1,0 +1,7 @@
+n m redNodes blueNodes 
+167 634 7 13 
+Algorithm Time Memory(MB) score
+Greedy 2.69 562.223 39.0167
+DegreeVersionOne 2.69 582.145 35.0476
+DegreeVersionTwo 2.7 582.145 33.1141
+Compare 2.71 582.145 41.7425
