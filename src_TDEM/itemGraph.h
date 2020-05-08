@@ -19,7 +19,7 @@ namespace _Cide {
 		
 	public: 
 		
-        std::vector< std::vector< double> > probT;
+        //std::vector< std::vector< double> > probT;
         std::vector< std::vector<int> > hyperGT;
         
         // RR sets sampling related

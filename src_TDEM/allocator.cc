@@ -6,21 +6,27 @@
 
 namespace _Cide{
     
-    allocator::allocator(AnyOption* opt1) {
+    allocator::allocator(AnyOption* opt1, string inputname, string comparefilename) {
         
         opt = opt1;
+        probGraphFile = inputname;
         //delim = " \t";
         delim = " ";
 
+        compareFile = comparefilename;
+
+        readGraphNodes(); // assign n and m
+        readCompareNodes(); // get red and blue nodes as k_r and k_b
+
         sfmt_init_gen_rand(&sfmtSeed , 95082);
         
-        n = strToInt(opt->getValue("n"));
-        m = strToInt(opt->getValue("m"));
+        //n = strToInt(opt->getValue("n"));
+        //m = strToInt(opt->getValue("m"));
 
         //k = strToInt(opt->getValue("k"));
-        k_r = strToInt(opt->getValue("kr"));
-        k_b = strToInt(opt->getValue("kb"));
-        tao = ceil(k_b/k_r);
+        //k_r = strToInt(opt->getValue("kr"));
+        //k_b = strToInt(opt->getValue("kb"));
+        tao = ceil((double)k_b/(double)k_r);
         P = Permutation(n, k_r*(tao + 1)) / (double) (pow(fact(tao), k_r) * fact(k_r));
 
 
@@ -30,6 +36,9 @@ namespace _Cide{
         outFolderName = opt->getValue("outputFolder");
     
         nrPairs = n * nrItems; // multiple items
+
+        nodeDegree.resize(n);
+
         
         for(int i = 0; i < n; i++)
             graphT.emplace_back(vector<int>());
@@ -49,19 +58,21 @@ namespace _Cide{
         for(int i = 0; i < nrItems; i++) {
             //_Cide::itemGraph *ig = new _Cide::itemGraph(n);
             auto *ig = new _Cide::itemGraph(n);
-            for (int j = 0; j < n; j++)
+            //for (int j = 0; j < n; j++)
                 //ig->probT.push_back(std::vector< double>());
-                ig->probT.emplace_back(std::vector< double>());
+                //ig->probT.emplace_back(std::vector< double>());
             rcList->push_back(ig);
         }
 
-        nodeDegree = std::vector<double>(n,0.0);
+        //nodeDegree = std::vector<double>(n,0.0);
         
         cout << "nr items " << nrItems << endl;
         //cout << "assignment size " << k << endl;
-        
+
         readTICGraph();
+
         cout << "successfully read everything " << endl;
+
         arrangeOutputFiles();
         cout << "starting assignment for tdem" << endl;
         tdem();
@@ -69,8 +80,10 @@ namespace _Cide{
 // comment out below to run the baselines
         degreeVersionOne(prevSize);
         degreeVersionTwo(prevSize);
+        compareGivenNodes(prevSize);
     }
-    
+
+
     double allocator::tdem() {
         
         cout << "computation for lower bounding OPT started " << endl;
@@ -88,6 +101,9 @@ namespace _Cide{
         duration_common = double(common_end - common_begin) / CLOCKS_PER_SEC;
 
         double greedySolution = n * rcGreedy(prevSize, true);
+
+        cout <<"Greedy Solution is: "<< greedySolution << endl;
+
         return greedySolution; 
     }
 
@@ -131,7 +147,7 @@ namespace _Cide{
 
         // rcList -> itemID -> hyperGT[rcID]: store a list of the nodes.
         double tmpsize = createhyperGTPairs(newSize);
-        cout << "size of hyPerGTPairs is " << tmpsize << endl;
+        cout << "current size is " << newSize <<  " size of hyPerGTPairs is " << tmpsize << endl;
 
         for (int rcID = prevSize; rcID < newSize; ++rcID) {
             int tpsize = hyperGTpairs[rcID].size();
@@ -158,7 +174,7 @@ namespace _Cide{
     double allocator::createhyperGTPairs(int64 newSize) {
         // use to create reverse rr pairs
         //update hyperG and hyper_degree
-        cout << "newSize is " << newSize << endl;
+        //cout << "newSize is " << newSize << endl;
         for (int z = prevSize; z < newSize; ++z) {
             hyperGTpairs.emplace_back(std::vector<int>()); // init
         }
@@ -199,13 +215,19 @@ namespace _Cide{
 
         seedSet.clear();
         seedScores.clear(); // seedScores should be cleared as well.
+        std::set<int> rednodes;
+        int flag_red = 0;
         while ((int)seedSet.size() < k_b) {
             // here I use the vector to store the results, but can use the priority queue.
             //bestPairID = std::max_element(ExpScore.begin(), ExpScore.end()) - ExpScore.begin();
             bestPairID = std::distance(ExpScore.begin(), std::max_element(ExpScore.begin(), ExpScore.end()));
             //cout << "bestPairID is " << bestPairID   <<endl;
             bestRedNodeID = (int) bestPairID / n;
+            rednodes.insert(bestRedNodeID);
             bestBlueNodeID = (int) bestPairID % n;
+
+            cout << "sum of Expscore is " << accumulate(ExpScore.begin(), ExpScore.end(), 0) << endl;
+
 
             // if can not select, then just pop out
             if (isValidRed[bestRedNodeID] == 0 || isValidBlue[bestBlueNodeID] == 0) {
@@ -229,12 +251,25 @@ namespace _Cide{
                    ExpScore[bestRedNodeID*n + i] = 0;
                 }
             }
+
             for (int i = 0; i < n; ++i) {
                ExpScore[i*n + bestBlueNodeID]  = 0;
                ExpScore[i*n + bestRedNodeID]  = 0;
                ExpScore[bestBlueNodeID*n + i] = 0;
             }
-            
+
+            // if red nodes reaches k_r
+            if(rednodes.size() == k_r && flag_red == 0){
+                for (int i = 0; i < n; ++i) {
+                    if(rednodes.count(i) == 0){
+                        isValidRed[i] = 0;
+                        for (int j = 0; j < n; ++j) {
+                           ExpScore[i*n + j] = 0;
+                        }
+                    }
+                }
+                flag_red = 1;
+            }
 
             // update the ExpScore of the pairs whose marginal gain change due to the best pair selection
             int tmpsize = hyperGpairs[bestPairID].size();
@@ -257,6 +292,15 @@ namespace _Cide{
            totalExpScore += seedScores[i1];
         }
 
+        int covercount = 0;
+        for (int l = 0; l < isCovered.size(); ++l) {
+            if(isCovered[l])
+                covercount ++;
+        }
+
+        cout << "totalExpScore is: " << totalExpScore << " cover is " << covercount << " sample size is " << rcSampleSize << endl;
+
+
         ///////////// produce the additional results here
         ////////////  Remember should write the f function results not the g function result.
         if(extraResults) {
@@ -270,7 +314,7 @@ namespace _Cide{
             // compute for each seed pair its prob. of reaching target nodes
             
             // compute f(seedset) for each target node v, should consider the other pairs.
-            string extraFName0 = outFolderName + OS_SEP + "nodeExpLevels_tdem.txt";
+            string extraFName0 = outFolderName + OS_SEP + compareFile + "_tdem.txt";
             ofstream extraStream0;
 
             if(extraStream0.is_open())
@@ -297,7 +341,7 @@ namespace _Cide{
             for (int i = 0; i < k_b; ++i) {
                 int SeedPairID = seedSet[i];
                 tmptotalscore += seedScores[i];
-                writeInMasterOutputFile(SeedPairID/n, SeedPairID%n, seedScores[i], tmptotalscore, totalDuration, totalMemory);
+                //writeInMasterOutputFile(SeedPairID/n, SeedPairID%n, seedScores[i], tmptotalscore, totalDuration, totalMemory);
                 for (int id : hyperG[SeedPairID / n]) {
                     rrRed.push_back(id);
                 }
@@ -334,10 +378,12 @@ namespace _Cide{
             extraStream0 << "Time" << " " << "Memory (in mb)"<< endl;
             extraStream0 << totalDuration << " " << totalMemory <<endl;
 
-            extraStream0 <<  "Score is " << totalscore << endl;
+            extraStream0 <<  "Score is " << totalscore*n << endl;
             extraStream0.close();
 //
-            cout << "Total score is " << totalscore << endl;
+            cout << "Total score of Greedy is " << totalscore*n << endl;
+
+            writeInMasterOutputFile("Greedy", totalDuration,  totalMemory, totalscore*n);
 
         } // end of extra results
         
@@ -347,7 +393,7 @@ namespace _Cide{
 
     double allocator::degreeVersionOne(int64 rcSampleSize) {
 
-        string extraFName0 = outFolderName + OS_SEP + "nodeExpLevels_degreeVersionOne.txt";
+        string extraFName0 = outFolderName + OS_SEP + compareFile + "_degreeVersionOne.txt";
         ofstream extraStream0;
         if(extraStream0.is_open())
             extraStream0.close();
@@ -429,10 +475,12 @@ namespace _Cide{
         extraStream0 << "Time" << " " << "Memory (in mb)"<< endl;
         extraStream0 << totalDuration << " " << totalMemory <<endl;
 
-        cout << "score is" << " " << totalscore << endl;
-        extraStream0 << "score is" << " " << totalscore << endl;
+        cout << "Total score of Degree one is" << " " << totalscore*n << endl;
+        extraStream0 << "score is" << " " << totalscore*n << endl;
 
         extraStream0.close();
+
+        writeInMasterOutputFile("DegreeVersionOne", totalDuration,  totalMemory, totalscore*n);
 
         return totalscore;
     }
@@ -440,7 +488,7 @@ namespace _Cide{
 
     double allocator::degreeVersionTwo(int64 rcSampleSize) {
 
-        string extraFName0 = outFolderName + OS_SEP + "nodeExpLevels_degreeVersionTwo.txt";
+        string extraFName0 = outFolderName + OS_SEP + compareFile + "_degreeVersionTwo.txt";
 
         ofstream extraStream0;
         if(extraStream0.is_open())
@@ -465,7 +513,6 @@ namespace _Cide{
             heap.push(pairVal);
         }
 
-
         std::vector<int> redseedSet, blueseedSet;
         redseedSet.clear();
         blueseedSet.clear();
@@ -476,8 +523,8 @@ namespace _Cide{
         std::vector<int> rrRed;
         std::vector<int> rrBlue;
 
-        rrRed.reserve(n*k_r);
-        rrBlue.reserve(n*k_b);
+        //rrRed.reserve(n*k_r);
+        //rrBlue.reserve(n*k_b);
 
         while ((int) seedSet.size() < k_r + k_r) {
             pair<int, double> pairVal = heap.top();
@@ -546,22 +593,194 @@ namespace _Cide{
         extraStream0 << "Time" << " " << "Memory (in mb)"<< endl;
         extraStream0 << totalDuration << " " << totalMemory <<endl;
 
-        extraStream0 <<  "Score is " << totalscore << endl;
+        extraStream0 <<  "Score is " << totalscore*n << endl;
 
         extraStream0.close();
+
+        cout << "Total score of degree two is " << totalscore*n << endl;
+
+        writeInMasterOutputFile("DegreeVersionTwo", totalDuration,  totalMemory, totalscore*n);
+        return totalscore;
+    }
+
+    double allocator::compareGivenNodes(int64 rcSampleSize) {
+
+        string extraFName0 = outFolderName + OS_SEP + compareFile + "_compareGiven.txt";
+
+        ofstream extraStream0;
+        if(extraStream0.is_open())
+            extraStream0.close();
+
+        extraStream0.open(extraFName0.c_str());
+
+        if (!extraStream0.is_open()) {
+            cout << "Can't open file " << extraFName0  << " for writing" << endl;
+            exit(1);
+        }
+
+        clock_t begin = clock();
+
+        std::vector<int> rrRed;
+        std::vector<int> rrBlue;
+
+        for (int i : comparered) {
+            for (int id : hyperG[i]) {
+               rrRed.push_back(id);
+            }
+        }
+
+        for (int i : compareblue) {
+            for (int id : hyperG[i]) {
+                rrBlue.push_back(id);
+            }
+        }
+
+
+        extraStream0 << "red nodes: ";
+        for (int k : comparered) {
+            extraStream0 << k << " ";
+        }
+        extraStream0 << "\n";
+
+        extraStream0 << "blue nodes: ";
+        for (int k : compareblue) {
+            extraStream0 << k << " ";
+        }
+        extraStream0 << "\n";
+
+        std::sort(rrRed.begin(), rrRed.end());
+        std::sort(rrBlue.begin(), rrBlue.end());
+
+        std::vector<int>::iterator it;
+        std::vector<int> rrRedBlue(rrRed.size() + rrBlue.size(), 0);
+
+        it = std::set_intersection(rrRed.begin(), rrRed.end(), rrBlue.begin(), rrBlue.end(), rrRedBlue.begin());
+        rrRedBlue.resize(it - rrRedBlue.begin());
+
+        float totalscore = (float) rrRedBlue.size() / (float) rcSampleSize;
+
+        // end of extra results
+        clock_t end = clock();
+        totalDuration = double(end - begin) / CLOCKS_PER_SEC + duration_common; // in seconds
+        totalMemory = getCurrentMemoryUsage(); // in MB
+
+        extraStream0 << "Time" << " " << "Memory (in mb)"<< endl;
+        extraStream0 << totalDuration << " " << totalMemory <<endl;
+
+        extraStream0 <<  "Score is " << totalscore*n << endl;
+        extraStream0.close();
+
+        cout << "Total score of compare is " << totalscore*n << endl;
+
+
+        writeInMasterOutputFile("Compare", totalDuration,  totalMemory, totalscore*n);
 
         return totalscore;
     }
 
 
+    void allocator::readCompareNodes() {
+
+        //string probGraphFile = opt->getValue("probGraphFile");
+        ifstream myfile (compareFile.c_str(), ios::in);
+
+        //double *itemProbs; //item-specific influence probabilities
+
+        if (myfile.is_open()) {
+            string line1;
+            string line2;
+            getline(myfile, line1);
+            getline(myfile, line2);
+
+            vector<string> nodeids1;
+            vector<string> nodeids2;
+
+            split1(line1, nodeids1);
+            split1(line2, nodeids2);
+
+            if(nodeids1.size() > nodeids2.size()){
+                for (int i = 2; i < nodeids1.size(); ++i) {
+                    unsigned int tt = strToInt(nodeids1[i]);
+                    compareblue.push_back(tt);
+                }
+                for (int i = 2; i < nodeids2.size(); ++i) {
+                    unsigned int tt = strToInt(nodeids2[i]);
+                    comparered.push_back(tt);
+                }
+            }
+            else{
+                for (int i = 2; i < nodeids1.size(); ++i) {
+                    unsigned int tt = strToInt(nodeids1[i]);
+                    comparered.push_back(tt);
+                }
+                for (int i = 2; i < nodeids2.size(); ++i) {
+                    unsigned int tt = strToInt(nodeids2[i]);
+                    compareblue.push_back(tt);
+                }
+            }
+
+            myfile.close();
+        }
+
+        k_r = comparered.size();
+        k_b = compareblue.size();
+        cout << "total number of red nodes " << k_r << endl;
+        cout << "total number of blue nodes " << k_b << endl;
+    }
+
+
+
+    void allocator::readGraphNodes() {
+
+        //string probGraphFile = opt->getValue("probGraphFile");
+        ifstream myfile (probGraphFile.c_str(), ios::in);
+
+        //double *itemProbs; //item-specific influence probabilities
+
+        int nrEdges = 0;
+        set<int> nodes; // for control
+
+        if (myfile.is_open()) {
+            while (! myfile.eof() )	{
+                std::string line;
+                getline (myfile,line);
+                if (line.empty()) continue;
+
+                std::vector<std::string> nodeids;
+                split1(line, nodeids);
+                unsigned int u1 = strToInt(nodeids[0]);
+                unsigned int u2 = strToInt(nodeids[1]);
+
+                if (u1 == u2)
+                    continue;
+
+                nrEdges++;
+                // for control
+                nodes.insert(u1);
+                nodes.insert(u2);
+
+            }
+
+            myfile.close();
+        }
+
+        n = nodes.size();
+        m = nrEdges;
+        cout << "total number of nodes " << nodes.size() << endl;
+        cout << "total number of edges " << nrEdges << endl;
+    }
+
+
+
     void allocator::readTICGraph() {
         
-        string probGraphFile = opt->getValue("probGraphFile");
+        //string probGraphFile = opt->getValue("probGraphFile");
         cout << "Reading file " << probGraphFile << endl;
         ifstream myfile (probGraphFile.c_str(), ios::in);
-        
-        double *itemProbs; //item-specific influence probabilities
-        
+
+
+        //double *itemProbs; //item-specific influence probabilities
+
         int nrEdges = 0;
         set<int> nodes; // for control
         
@@ -570,26 +789,17 @@ namespace _Cide{
                 std::string line;
                 getline (myfile,line);
                 if (line.empty()) continue;
-                cout << line << endl;
-                std::string::size_type pos = line.find_first_of(delim);
-                int prevpos = 0;
-                
-                //first user
-                string str = line.substr(prevpos, pos-prevpos);
-                int u1;
-                u1 = strToInt(str);
-                
-                //second user
-                prevpos = line.find_first_not_of(delim, pos);
-                pos = line.find_first_of(delim, prevpos);
-                int u2;
-                u2 = strToInt(line.substr(prevpos, pos - prevpos));
+
+                std::vector<std::string> nodeids;
+                split1(line, nodeids);
+                unsigned int u1 = strToInt(nodeids[0]);
+                unsigned int u2 = strToInt(nodeids[1]);
                 
                 if (u1 == u2)
                     continue;
-                
+
                 nodeDegree[u1] = nodeDegree[u1] + 1.0;
-                
+
                 nrEdges++;
                 
                 graphT[u2].push_back(u1); //insert to the transposed graph
@@ -598,40 +808,9 @@ namespace _Cide{
                 nodes.insert(u1);
                 nodes.insert(u2);
 
-                /* do not insert the probability
-                prevpos = line.find_first_not_of(delim, pos);
-                
-                str = line.substr(prevpos);
-                itemProbs = new double[nrItems];
-                stringTokenizer(str, itemProbs, nrItems, delim);
-                
-                
-                for(int i = 0; i < nrItems; i++) {
-                    rcList->at(i)->probT[u2].push_back(itemProbs[i]);
-                }
-                 */
-                for(int i = 0; i < nrItems; i++) {
-                    rcList->at(i)->probT[u2].push_back(1.0); // just insert some number here.
-                }
             }
-            
-            // verify input
-            if (n != (int) nodes.size()) {
-                cout << "problem: nr of nodes read is not equal to input n, exiting..." << endl;
-                exit(1);
-            }
-            
-            if (m != (int) nrEdges) {
-                cout << "problem: nr of edges read is not equal to input m, exiting..." << endl;
-                exit(1);
-            }
-            
-//            cout << "node ids kontrol " << endl;
-//            for (set<int>::iterator it = nodes.begin(); it != nodes.end(); it++) {
-//                cout << (*it) << " ";
-//            }
-//            cout << endl;
-            
+
+
             myfile.close();
         }
         
@@ -639,8 +818,6 @@ namespace _Cide{
             cout << "Can't open input graph file " << probGraphFile << endl;
         
         cout << "graph import complete " << endl;
-        cout << "total number of nodes " << nodes.size() << endl;
-        cout << "total number of edges " << nrEdges << endl;
     }
 
     
@@ -650,12 +827,12 @@ namespace _Cide{
     
     void allocator::arrangeOutputFiles() {
         
-                string command = string("mkdir -p ") + outFolderName ;
+       string command = string("mkdir -p ") + outFolderName ;
         
-                system(command.c_str());
+       system(command.c_str());
         
         
-        string masterFileName = "assignment_tdem.txt";
+        string masterFileName = compareFile + "_combinedresults.txt";
         outMasterName = outFolderName + OS_SEP + masterFileName;
 //        outMasterName = masterFileName;
         
@@ -664,7 +841,9 @@ namespace _Cide{
         
         outMasterStream.open(outMasterName.c_str());
         
-        outMasterStream << "redNode" << " " << "blueNode" << " " <<  "mgScore" << " " << "cumScore" << " " << "duration(sec)" << " " << "memory(mb)" << endl;
+        outMasterStream << "n" << " " << "m" << " " << "redNodes" << " " << "blueNodes" << " "<< endl;
+        outMasterStream << n << " " << m << " " << k_r << " " << k_b << " " << endl;
+        outMasterStream << "Algorithm" << " " << "Time" << " " << "Memory(MB)" << " " << "score" << endl;
         
         if (!outMasterStream.is_open()) {
             cout << "Can't open file " << outMasterName  << " for writing" << endl;
@@ -682,9 +861,10 @@ namespace _Cide{
     //    }
     
     
-    void allocator::writeInMasterOutputFile(int nodeRed, int nodeBlue, double mgScore, double totScore, float duration, float memory) {
+    void allocator::writeInMasterOutputFile(const string& algorithm, float duration, float memory, double score) {
         // seed-node item mgScore totScore runTime(sec) memory(mb)
-        outMasterStream << nodeRed << " " << nodeBlue << " " <<  mgScore << " " << totScore << " " << duration << " " << memory << endl;
+        outMasterStream << algorithm << " " << duration << " " <<  memory << " " << score <<  endl;
     }
+
 
 }

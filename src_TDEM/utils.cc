@@ -1,3 +1,4 @@
+#include <iterator>
 #include "utils.h"
 
 namespace _Cide{
@@ -95,3 +96,4 @@ void trim(char *str) {
 	rtrim(str);
 	ltrim(str);
 }
+

@@ -35,7 +35,7 @@ namespace _Cide{
         
     public:
         
-        allocator(AnyOption* opt);
+        allocator(AnyOption* opt, string inputfile, string comparefile);
         ~allocator();
         
         time_t startTime;
@@ -44,6 +44,8 @@ namespace _Cide{
     
         // problem parameters
         AnyOption *opt;
+        string probGraphFile; // define input graph
+        string compareFile;
         int n, m, nrItems, nrPairs, k_r, k_b;
         int tao = floor((double) k_b / (double) k_r);
         double P;
@@ -54,6 +56,10 @@ namespace _Cide{
         std::vector<int> seedSet;
         std::vector<double> seedScores;
         std::vector<double> nodeDegree;
+
+        std::vector<int> comparered;
+        std::vector<int> compareblue;
+
 
         
         // RC-sampling related
@@ -76,6 +82,7 @@ namespace _Cide{
         double rcGreedy(int64 rcSampleSize, bool extraResults);
         double degreeVersionOne(int64 rcSampleSize);
         double degreeVersionTwo(int64 rcSampleSize);
+        double compareGivenNodes(int64 rcSampleSize);
        // double degreeFar(int64 rcSampleSize, int k);
         //double degreeWeighted(int64 rcSampleSize, int k);
 
@@ -89,10 +96,12 @@ namespace _Cide{
         // IO operations
         string delim;
         void readTICGraph();
+        void readGraphNodes(); // get m and n
+        void readCompareNodes(); // read red and blue nodes for comparision
         //void readItemLeaningsFile();
         //void readNodeLeaningsFile();
         
-        void writeInMasterOutputFile(int nodeID, int itemID, double mgScore, double totScore, float duration, float memory);
+        void writeInMasterOutputFile(const string& algorithm, float duration, float memory, double score);
 //        void writeInMasterOutputFile(int nodeID, int itemID);
         void arrangeOutputFiles();
         

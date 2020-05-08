@@ -12,6 +12,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 namespace _Cide{
 	extern std::vector< std::vector<int> > graphT;
@@ -149,14 +151,19 @@ inline double sqr(double t)
     return t * t;
 }
 
-
+template <class Container>
+void split1(const std::string& str, Container& cont)
+{
+    std::istringstream iss(str);
+    std::copy(std::istream_iterator<std::string>(iss),
+              std::istream_iterator<std::string>(),
+              std::back_inserter(cont));
+}
 
 // commented out below - using from the c++ math library instead
 //static double log2(int n){
 //    return std::log(n) / std::log(2);
 //}
-
-float getCurrentMemoryUsage();
 
 
 #endif

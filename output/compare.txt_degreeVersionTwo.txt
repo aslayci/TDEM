@@ -1,0 +1,5 @@
+red nodes: 26 57 17 90 
+blue nodes: 86 12 98 20 68 75 
+Time Memory (in mb)
+9.0062 600.355
+Score is 18.7695

@@ -22,11 +22,11 @@ outputFolder : output
 #
 #
 # number of nodes 
-n : 167
+#n : 167
 #
 #
 # number of edges
-m : 634
+#m : 634
 #
 #
 # number of items
@@ -37,8 +37,8 @@ nrItems : 2
 # assignment size
 #k : 5
 # assignment size, kr and kb, ensure that kb > kr
-kr : 7
-kb : 7
+#kr : 10
+#kb : 10
 #
 #
 # user attention constraint 

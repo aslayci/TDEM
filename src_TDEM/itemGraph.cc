@@ -10,7 +10,6 @@ namespace _Cide{
         visit = std::vector<bool>(n,false);
         
         sfmt_init_gen_rand(&sfmtSeed , 95082);
-
     }
     
     void itemGraph::generateRRSample(vector<int> &targetNodes, int64 prevSize, int64 newSize) {
