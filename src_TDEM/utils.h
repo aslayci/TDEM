@@ -12,6 +12,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <iterator>
 
 namespace _Cide{
 	extern std::vector< std::vector<int> > graphT;
@@ -54,8 +56,10 @@ inline unsigned int strToInt(string s) {
   return i;
 }
 
-inline unsigned int strToInt(const char* s) {
-  unsigned int i;
+//inline unsigned int strToInt(const char* s) {
+inline int strToInt(const char* s) {
+  //unsigned int i;
+  int i;
   istringstream myStream(s);
 
   if (myStream >> i)
@@ -126,19 +130,40 @@ inline double logcnk(int n, int k) {
     return ans;
 }
 
+// add some calculations
+inline double fact(int n){
+    if(n == 1)
+        return 1;
+    else
+        return n*fact(n-1);
+}
+
+inline double Permutation(int n, int k){
+    return (double) fact(n)/ (double) fact(k);
+}
+
+inline double Combination(int n, int k){
+    return Permutation(n, k) / fact(k);
+}
+
 inline double sqr(double t)
 {
     return t * t;
 }
 
-
+template <class Container>
+void split1(const std::string& str, Container& cont)
+{
+    std::istringstream iss(str);
+    std::copy(std::istream_iterator<std::string>(iss),
+              std::istream_iterator<std::string>(),
+              std::back_inserter(cont));
+}
 
 // commented out below - using from the c++ math library instead
 //static double log2(int n){
 //    return std::log(n) / std::log(2);
 //}
-
-float getCurrentMemoryUsage();
 
 
 #endif

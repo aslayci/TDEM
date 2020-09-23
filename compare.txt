@@ -1,0 +1,2 @@
+red nodes: 26 86 89 100 78 90
+blue nodes: 57 12 17 98

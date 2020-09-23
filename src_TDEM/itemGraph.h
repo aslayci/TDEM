@@ -19,11 +19,11 @@ namespace _Cide {
 		
 	public: 
 		
-        std::vector< std::vector< double> > probT;
+        //std::vector< std::vector< double> > probT;
         std::vector< std::vector<int> > hyperGT;
         
         // RR sets sampling related
-        sfmt_t sfmtSeed;
+        sfmt_t sfmtSeed{}; //struct
 		std::vector<bool> visit; 
 		std::vector<int> visit_mark;
 		std::deque<int> q;

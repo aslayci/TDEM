@@ -6,15 +6,15 @@
 # node ids should be mapped to 0 to n-1 where n is the total number of nodes
 # format: node_u node_v p^1_{uv} ... p^{nrItems}_{uv} 
 # location of input graph file
-probGraphFile : example_input/graph.txt
+#probGraphFile : example_input/graph2.txt
 #
 #
 # location of item-labels file, one line per item label
-itemLeaningsFile : example_input/leanings_items.txt
+#itemLeaningsFile : example_input/leanings_items2.txt
 #
 #
 # location of node-labels file, one line per node label
-nodeLeaningsFile : example_input/leanings_nodes.txt
+# nodeLeaningsFile : example_input/leanings_nodes.txt
 #
 #
 # location of output folder for exporting results, creates the folder if it doesn't exist or overwrites if exists
@@ -22,23 +22,27 @@ outputFolder : output
 #
 #
 # number of nodes 
-n : 167
+#n : 167
 #
 #
 # number of edges
-m : 634
+#m : 634
 #
 #
 # number of items
-nrItems : 25
+#nrItems : 25
+nrItems : 2
 #
 #
 # assignment size
-k : 5
+#k : 5
+# assignment size, kr and kb, ensure that kb > kr
+#kr : 10
+#kb : 10
 #
 #
 # user attention constraint 
-attentionConstraint : 1
+# attentionConstraint : 100
 #
 #
 # epsilon for RC-Estimation

@@ -35,7 +35,7 @@ namespace _Cide{
         
     public:
         
-        allocator(AnyOption* opt);
+        allocator(AnyOption* opt, string inputfile, string comparefile);
         ~allocator();
         
         time_t startTime;
@@ -44,32 +44,52 @@ namespace _Cide{
     
         // problem parameters
         AnyOption *opt;
-        int n, m, nrItems, nrPairs, kappa, k;
+        string probGraphFile; // define input graph
+        string compareFile;
+        string compareFileShort;
+        int n, m, nrItems, nrPairs, k_r, k_b;
+        int tao = floor((double) k_b / (double) k_r);
+        double P;
         double epsilon, delta, ell;
     
-        std::vector<double> nodeLeanings;
-        std::vector<double> itemLeanings;
+        //std::vector<double> nodeLeanings;
+        //std::vector<double> itemLeanings;
         std::vector<int> seedSet;
         std::vector<double> seedScores;
         std::vector<double> nodeDegree;
+
+        std::vector<int> comparered;
+        std::vector<int> compareblue;
+
+
         
         // RC-sampling related
         sfmt_t sfmtSeed;
         itemGraphList *rcList; // contains references to coordinated RR sets of item graphs
         std::vector< std::vector<int> > hyperG;
-        std::vector<double> hyper_degree;
+        std::vector<double> hyper_degree; //previously not shown
         vector<int> targetNodes;
-        int64 prevSize;
-        
+        int64 prevSize; // used in generate rrsets
+
+        // to ensure pick pairs, define something similar to hyperGT
+
+        std::vector< std::vector<int> > hyperGTpairs;
+        std::vector<std::vector<int>> hyperGpairs;
+        std::vector<double > hyper_degreepairs;
+
         double tdem();
         double lowerBoundOPT();
         void generateRCSets(int64 newSize);
-        double rcGreedy(int64 rcSampleSize, int k, bool extraResults);
-        double degreeClose(int64 rcSampleSize, int k);
-        double degreeFar(int64 rcSampleSize, int k);
-        double degreeWeighted(int64 rcSampleSize, int k);
-        
-        
+        double rcGreedy(int64 rcSampleSize, bool extraResults);
+        double degreeVersionOne(int64 rcSampleSize);
+        double degreeVersionTwo(int64 rcSampleSize);
+        double compareGivenNodes(int64 rcSampleSize);
+       // double degreeFar(int64 rcSampleSize, int k);
+        //double degreeWeighted(int64 rcSampleSize, int k);
+
+        // to ensure pick pairs
+        double createhyperGTPairs(int64 newSize);
+
         // time and memory
         float totalDuration; // in seconds
         float totalMemory; // in MB
@@ -77,10 +97,12 @@ namespace _Cide{
         // IO operations
         string delim;
         void readTICGraph();
-        void readItemLeaningsFile();
-        void readNodeLeaningsFile();
+        void readGraphNodes(); // get m and n
+        void readCompareNodes(); // read red and blue nodes for comparision
+        //void readItemLeaningsFile();
+        //void readNodeLeaningsFile();
         
-        void writeInMasterOutputFile(int nodeID, int itemID, double mgScore, double totScore, float duration, float memory);
+        void writeInMasterOutputFile(const string& algorithm, float duration, float memory, double score);
 //        void writeInMasterOutputFile(int nodeID, int itemID);
         void arrangeOutputFiles();
         

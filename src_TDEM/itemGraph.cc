@@ -10,22 +10,23 @@ namespace _Cide{
         visit = std::vector<bool>(n,false);
         
         sfmt_init_gen_rand(&sfmtSeed , 95082);
-
     }
     
     void itemGraph::generateRRSample(vector<int> &targetNodes, int64 prevSize, int64 newSize) {
         for (int64 z = prevSize; z < newSize; z++) {
-            hyperGT.push_back(std::vector<int>());
+            hyperGT.emplace_back(std::vector<int>());
+            //hyperGT.push_back(std::vector<int>());
             BuildHypergraphNode(targetNodes[z], z);
 
         }
     }
     
-    itemGraph::~itemGraph(void) {
+    itemGraph::~itemGraph() {
         cout << "destructor called for itemGraph class" << endl;
     }
 
     //, std::vector< std::vector<int> > &hyperGT
+    // only contain the node ids, rather than the pairs.
     int itemGraph::BuildHypergraphNode(int uStart, int64 hyperiiid) {
         int n_visit_edge=1;
         
@@ -35,7 +36,7 @@ namespace _Cide{
         
         q.clear();
         q.push_back(uStart);
-        visit_mark[n_visit_mark++] = uStart;
+        visit_mark[n_visit_mark++] = uStart; // repeatedly use this, not not initialize again.
         visit[uStart] = true;
         
         while(!q.empty()) {
@@ -47,7 +48,7 @@ namespace _Cide{
                 int v = graphT[i][j]; //parent of u in the original graph G
                 n_visit_edge++;
                 double randDouble = sfmt_genrand_real1(&sfmtSeed);
-                if(randDouble > probT[i][j])
+                if(randDouble > ((double)1.0/ (double)graphT[i].size())) // calculated on the fly
                     continue;
                 if(visit[v])
                     continue;
